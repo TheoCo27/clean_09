@@ -1,36 +1,51 @@
-NAME = btc
+# **************************************************************************** #
+#                                                                              #
+#                                                         :::      ::::::::    #
+#    Makefile                                           :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: 2025/08/18 09:29:18 by tcohen            #+#    #+#              #
+#    Updated: 2025/09/03 17:42:22 by tcohen           ###   ########.fr        #
+#                                                                              #
+# **************************************************************************** #
 
-SRCS =	$(wildcard *.cpp)
+NAME        := btc
+CXX         := c++
+CXXFLAGS    := -Wall -Wextra -Werror -std=c++98 -g -O0
 
-OBJS = ${SRCS:.cpp=.o}
+SRC         := main.cpp BitcoinExchange.cpp
+OBJ_DIR     := obj
+OBJ         := $(SRC:%.cpp=$(OBJ_DIR)/%.o)
 
-CC = c++
-CFLAGS = -Wall -Wextra -Werror -std=c++98
+# === Couleurs pour plus de clarté ===
+
+GREEN := \033[0;32m
+BLUE  := \033[0;34m
+RESET := \033[0m
+
+# === Règles ===
 
 all: $(NAME)
 
-.cpp.o:
-	$(CC) $(CFLAGS) -c $< -o $(<:.cpp=.o)
+# Compilation finale
+$(NAME): $(OBJ)
+	@$(CXX) $(CXXFLAGS) -o $@ $^
+	@echo "$(GREEN)[✔] Compilation terminée : $(NAME)$(RESET)"
 
-csv:
-	curl -O https://projects.intra.42.fr/uploads/document/document/15126/cpp_09.tgz
-	tar xvf cpp_09.tgz
-	rm -rf cpp_09.tgz
-	mv cpp_09/data.csv ./
-	rm -rf cpp_09
-
-$(NAME): $(OBJS)
-	$(CC) $(OBJS) $(CFLAGS) -o $(NAME)
+# Compilation des fichiers .o
+$(OBJ_DIR)/%.o: %.cpp
+	@mkdir -p $(OBJ_DIR)
+	@$(CXX) $(CXXFLAGS) -c $< -o $@
 
 clean:
-	@$(RM)  $(OBJS)
-	@rm -rf data.csv
+	@rm -rf $(OBJ_DIR)
+	@echo "$(BLUE)[🧹] Fichiers objets supprimés$(RESET)"
 
 fclean: clean
-	@$(RM) $(NAME)
+	@rm -f $(NAME)
+	@echo "$(BLUE)[🗑] Exécutable supprimé : $(NAME)$(RESET)"
 
 re: fclean all
 
-run : all csv
-
-.PHONY: all clean fclean re csv run
+.PHONY: all clean fclean re

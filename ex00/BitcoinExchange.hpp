@@ -1,28 +1,47 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   BitcoinExchange.hpp                                :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/08/18 09:30:07 by tcohen            #+#    #+#             */
+/*   Updated: 2025/08/18 16:50:11 by tcohen           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #pragma once
 
 #include <iostream>
-#include <fstream>
-#include <sstream>
 #include <map>
 #include <string>
-#include <vector>
-#include <cctype>
+#include <algorithm>
+#include <fstream>
+#include <sstream>
+#include <stdexcept>
 
-class Btc
+typedef struct s_date
 {
-private:
-	std::map <std::string, float> data;
-	int readFlag;
-public:
-	Btc();
-	~Btc();
-	Btc& operator=(Btc const &var);
-	Btc(Btc const &var);
+	int year;
+	int month;
+	int day;
 
-	void setData(std::string date, float value);
+	bool operator<(const struct s_date& other) const{
+		if (year != other.year)
+			return year < other.year;
+		if (month != other.month)
+			return month < other.month;
+		return day < other.day;
+	}
+	bool operator==(const struct s_date& other) const {
+        return year == other.year && month == other.month && day == other.day;
+    }
 
-	void readInput(std::string inputPath);
+    bool operator!=(const struct s_date& other) const {
+        return !(*this == other);
+    }
+} t_date;
 
-	std::map<std::string, float> getData();
-	std::vector<std::string> splitString(std::string str, char delimiter);
-};
+int BitcoinExchange(std::string infile);
+bool ends_with(std::string str, std::string suffix);
+bool check_input_line(std::string line);
